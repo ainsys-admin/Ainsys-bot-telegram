@@ -49,7 +49,7 @@ def get_entity_id(entity_name):
 
 
 def get_entities(user_id):
-    entities_info = session.query(Fields).filter(Fields.chat_id == str(user_id)).all()
+    entities_info = session.query(Entities).filter(Entities.user_id == str(user_id)).all()
     entities = [entity.entity for entity in entities_info]
 
     return entities
