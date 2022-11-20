@@ -13,6 +13,8 @@ class BotMessage:
     USER = 'Ваш ID:'
     ENTITIES = f"\nВаши Сущности:\n"
     FIELD = 'Поле:'
+    FIELDS = 'Выберете поле, в которое хотите передать данные.'
+    FIELDS_END = 'Выберете поле, в которое хотите передать данные или отправьте данные'
     TYPE = 'Тип:'
     CHOOSE_ENTITY = 'Выберете ту сущность с которой будете работать'
     HELP = 'Все команды бота:' \
@@ -21,6 +23,7 @@ class BotMessage:
            '\n/get_entities - получение всех текущих сущностей' \
            '\n/update_data - отправка данных' \
            '\n/help - вызов меню с командами'
+    FIELD ='field: '
 
 
 class BotCommand:
@@ -44,3 +47,4 @@ class ParcePhrase:
 
 class ButtonCommand:
     ADD_ENTITY = "Отправить сущность: "
+    ADD_FIELDS = "Отправить данные: "

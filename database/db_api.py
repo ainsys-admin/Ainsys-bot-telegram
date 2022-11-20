@@ -55,12 +55,16 @@ def get_entities(user_id):
     return entities
 
 
-def get_fields(entity_id):
+def get_fields_for_ainsys(entity_id):
     fields_info = session.query(Fields).filter(Fields.entity_id == str(entity_id)).all()
 
     fields = {}
+
     for field in fields_info:
         fields[field.field] = field.field
+
+    fields[fields_info[0].user_id] = fields_info[0].user_id
+    fields[fields_info[0].chat_id] = fields_info[0].chat_id
 
     return fields
 
@@ -80,3 +84,13 @@ def get_entity_name(entity_id):
     name_entity = entities_info[0].entity
 
     return name_entity
+
+
+def get_fields_for_bot(entity_name):
+    entity_info = session.query(Entities).filter(Entities.entity == str(entity_name)).all()
+    entity_id = entity_info[0].id
+
+    fields_info = session.query(Fields).filter(Fields.entity_id == str(entity_id)).all()
+    fields = [f'field: {field.field}' for field in fields_info]
+
+    return fields

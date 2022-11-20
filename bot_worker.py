@@ -30,3 +30,18 @@ def add_entity_ainsys(user_id, entity_id, chat_id):
     }
     success_answer = requests.post("http://127.0.0.1:5000/webhook", data=json.dumps(data), headers=headers)
     return success_answer
+
+
+def update_entity_ainsys(user_id, entity_id, chat_id):
+    headers = {
+        "Content-Type": "application/json",
+    }
+    data = {
+        'action': 'update_entity',
+        'user_id': user_id,
+        'entity_id': entity_id,
+        'chat_id': chat_id,
+        'payload': ''
+    }
+    success_answer = requests.post("http://127.0.0.1:5000/webhook", data=json.dumps(data), headers=headers)
+    return success_answer

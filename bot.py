@@ -2,8 +2,8 @@ import asyncio
 
 from aiogram import Bot, Dispatcher, types
 
-from database.db_api import add_user, add_entity, get_entity_id, get_entities, add_field
-from bot_worker import get_webhook, add_entity_ainsys
+from database.db_api import add_user, add_entity, get_entity_id, get_entities, add_field, get_fields_for_bot
+from bot_worker import get_webhook, add_entity_ainsys, update_entity_ainsys
 from config import bot_token
 from constants import *
 
@@ -54,6 +54,8 @@ async def extract_data(message: types.Message):
     chat_info = message.chat
     user_id = message.from_user.id
     entities = get_entities(message.from_user.id)
+    field = ''
+    print(field)
 
     if ParcePhrase.FORMAT_URL in message.text:
         webhook = get_webhook(message.text, chat_info['id'])
@@ -96,7 +98,24 @@ async def extract_data(message: types.Message):
         await message.answer(BotMessage.CHOOSE_ENTITY, reply_markup=keyboard)
 
     if message.text in entities:
-        await message.answer(message.text)
+        fields = get_fields_for_bot(message.text)
+
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add(*fields)
+
+        await message.answer(BotMessage.FIELDS, reply_markup=keyboard)
+
+    if BotMessage.FIELD in message.text:  # в разработке, нужно продумать сбор данных
+        field = message.text
+
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add(types.KeyboardButton(text=ButtonCommand.ADD_FIELDS))
+
+        await message.answer(BotMessage.FIELDS_END, reply_markup=keyboard)
+
+    if ButtonCommand.ADD_FIELDS == message.text:  # в разработке, нужно продумать сбор данных
+
+        await message.answer(success_answer)
 
 
 async def main():
