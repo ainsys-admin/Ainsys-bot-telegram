@@ -8,7 +8,6 @@ class BotMessage:
                             f"ID_сущности: 2\n" \
                             f"Поле: name\n" \
                             f"Тип: string\n\n"
-
     ADD_FIELD_INSTRUCTION_SECOND = f"Можете добавить поле или отправить сущность в AINSYS"
     ID_ENTITY = f"ID_сущности:"
     USER = 'Ваш ID:'
@@ -16,12 +15,22 @@ class BotMessage:
     FIELD = 'Поле:'
     TYPE = 'Тип:'
     CHOOSE_ENTITY = 'Выберете ту сущность с которой будете работать'
+    HELP = 'Все команды бота:' \
+           '\n/start - запуск бота/регистрация пользователя' \
+           '\n/add_entity - добавление новой сущности' \
+           '\n/get_entities - получение всех текущих сущностей' \
+           '\n/update_data - отправка данных' \
+           '\n/help - вызов меню с компандами'
+
+
 
 
 class BotCommand:
     START = 'start'
     ADD_ENTITY = 'add_entity'
     GET_ENTITIES = 'get_entities'
+    UPDATE_DATA = 'update_data'
+    HELP = 'help'
 
 
 class BotContentTypes:

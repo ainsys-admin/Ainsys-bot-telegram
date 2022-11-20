@@ -16,6 +16,11 @@ async def cmd_start(message: types.Message):
     await message.answer(BotMessage.START)
 
 
+@dp.message_handler(commands=[BotCommand.HELP])
+async def cmd_start(message: types.Message):
+    await message.answer(BotMessage.HELP)
+
+
 @dp.message_handler(commands=[BotCommand.ADD_ENTITY])
 async def cmd_add_entities(message: types.Message):
     await message.answer(BotMessage.ADD_ENTITY_INSTRUCTION)
@@ -34,10 +39,21 @@ async def cmd_get_entities(message: types.Message):
     await message.answer(BotMessage.CHOOSE_ENTITY, reply_markup=keyboard)
 
 
+@dp.message_handler(commands=[BotCommand.UPDATE_DATA])
+async def cmd_get_entities(message: types.Message):
+    entities = get_entities(message.from_user.id)
+
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(*entities)
+
+    await message.answer(BotMessage.CHOOSE_ENTITY, reply_markup=keyboard)
+
+
 @dp.message_handler(content_types=BotContentTypes.TEXT)
 async def extract_data(message: types.Message):
     chat_info = message.chat
     user_id = message.from_user.id
+    entities = get_entities(message.from_user.id)
 
     if ParcePhrase.FORMAT_URL in message.text:
         webhook = get_webhook(message.text, chat_info['id'])
@@ -78,6 +94,9 @@ async def extract_data(message: types.Message):
 
         await message.answer(str(success_answer.text))
         await message.answer(BotMessage.CHOOSE_ENTITY, reply_markup=keyboard)
+
+    if message.text in entities:
+        await message.answer(message.text)
 
 
 async def main():
