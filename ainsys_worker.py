@@ -17,11 +17,7 @@ def add_new_entity(entity_id):
         "payload": get_fields(entity_id)
     }
 
-    print(webhook_url)
-    print(data)
-
     response = requests.post(webhook_url, headers=headers, json=data)
     response.raise_for_status()
-    print(response.text)
 
     return True
