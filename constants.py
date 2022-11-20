@@ -23,8 +23,6 @@ class BotMessage:
            '\n/help - вызов меню с командами'
 
 
-
-
 class BotCommand:
     START = 'start'
     ADD_ENTITY = 'add_entity'
@@ -46,7 +44,3 @@ class ParcePhrase:
 
 class ButtonCommand:
     ADD_ENTITY = "Отправить сущность: "
-
-
-class NameHandlerRequest:
-    ADD_ENTITY = "add_entity"
