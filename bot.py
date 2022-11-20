@@ -1,64 +1,83 @@
-import json
-
 import asyncio
-import requests
 
 from aiogram import Bot, Dispatcher, types
 
+from database.db_api import add_user, add_entity, get_entity_id, get_entities, add_field
+from bot_worker import get_webhook, add_entity_ainsys
 from config import bot_token
+from constants import *
 
 bot = Bot(token=bot_token)
 dp = Dispatcher(bot)
 
 
-@dp.message_handler(commands=["start"])
+@dp.message_handler(commands=[BotCommand.START])
 async def cmd_start(message: types.Message):
-    await message.answer("Добрый день.\n\n прикрепите AINSYS Вебхук.")
+    await message.answer(BotMessage.START)
 
 
-@dp.message_handler(content_types="text")
+@dp.message_handler(commands=[BotCommand.ADD_ENTITY])
+async def cmd_add_entities(message: types.Message):
+    await message.answer(BotMessage.ADD_ENTITY_INSTRUCTION)
+
+
+@dp.message_handler(commands=[BotCommand.GET_ENTITIES])
+async def cmd_get_entities(message: types.Message):
+    entities = get_entities(message.from_user.id)
+
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(*entities)
+
+    await message.answer(BotMessage.USER + str(message.from_user.id))
+    await message.answer(BotMessage.ENTITIES)
+    await message.answer(str(entities))
+    await message.answer(BotMessage.CHOOSE_ENTITY, reply_markup=keyboard)
+
+
+@dp.message_handler(content_types=BotContentTypes.TEXT)
 async def extract_data(message: types.Message):
-    print(message.text)
     chat_info = message.chat
-    if 'https' in message.text:
-        data = {
-            'webhook': message.text,
-            'chat_id': chat_info['id'],
-            'action': 'get_webhook'
-        }
-        webhook = requests.post("http://127.0.0.1:5000/webhook", data=json.dumps(data),
-                                headers={"Content-Type": "application/json"})
+    user_id = message.from_user.id
 
+    if ParcePhrase.FORMAT_URL in message.text:
+        webhook = get_webhook(message.text, chat_info['id'])
+        add_user(user_id, chat_info['id'], message.text)
 
-        await message.answer(f"Ваш вебхук: {webhook.text}")
-        await message.answer(f"Инструкция по использованию бота. Вы можете \n\n - Создать сущность /add_entity \n "
-                             f"- Показать все сущности\n")
+        await message.answer(BotMessage.WEBHOOK + webhook.text)
+        await message.answer(BotMessage.MAIN_INSTRUCTION)
 
-    if message.text == '/add_entity':
-        await message.answer(f"Введите название вашей сущности в формате, например - \n"
-                             f"Сущность: New")
+    if ParcePhrase.ENTITY in message.text:
+        entity_name = message.text[10:]
+        add_entity(entity_name, user_id, chat_info['id'])
+        entity_id = get_entity_id(entity_name)
 
-    if "Сущность" in message.text:
+        await message.answer(BotMessage.ID_ENTITY + str(entity_id))
+        await message.answer(BotMessage.ADD_FIELD_INSTRUCTION)
 
-        keyboard = types.InlineKeyboardMarkup()
-        keyboard.add(types.InlineKeyboardButton(text="Создать сущность", callback_data="add_entity"))
+    if ParcePhrase.FIELD in message.text:
+        message_text = message.text
+        info_for_field = message_text.split()
+        info_for_field.remove(BotMessage.ID_ENTITY)
+        info_for_field.remove(BotMessage.FIELD)
+        info_for_field.remove(BotMessage.TYPE)
 
-        await message.answer(f"Введите название вашего поля и тип данных в формате, например - \n\n"
-                             f"Поле: Имя \n"
-                             f"Тип: string \n\n"
-                             f"Если вам нужно еще ввести поле, введите в таком же формате, если нет"
-                             f"Нажмите на кнопку 'Создать сущность'", reply_markup=keyboard)
+        entity_id, field, type_field = info_for_field
+        keyboard = types.ReplyKeyboardMarkup()
+        keyboard.add(types.KeyboardButton(text=ButtonCommand.ADD_ENTITY + entity_id))
 
+        add_field(entity_id, field, type_field, chat_info['id'], user_id)
 
-@dp.callback_query_handler(text="add_entity")
-async def send_random_value(call: types.CallbackQuery):
-    data = {
-        'action': 'add_entity',
-    }
-    success_answer = requests.post("http://127.0.0.1:5000/webhook", data=json.dumps(data),
-                            headers={"Content-Type": "application/json"})
-    
-    await call.message.answer(str(success_answer.text))
+        await message.answer(BotMessage.ADD_FIELD_INSTRUCTION_SECOND, reply_markup=keyboard)
+
+    if ParcePhrase.CREATE_ENTITY in message.text:
+        success_answer = add_entity_ainsys(user_id, message.text[20:], chat_info['id'])
+        entities = get_entities(message.from_user.id)
+
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard.add(*entities)
+
+        await message.answer(str(success_answer.text))
+        await message.answer(BotMessage.CHOOSE_ENTITY, reply_markup=keyboard)
 
 
 async def main():

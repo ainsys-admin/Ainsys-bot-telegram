@@ -1,5 +1,7 @@
 from flask import Flask, request, abort
 
+from ainsys_worker import add_new_entity
+
 app = Flask(import_name=__name__)
 
 
@@ -13,9 +15,10 @@ async def get_data():
             return webhook
 
         if json['action'] == 'add_entity':
-            return 'сущность создана'
-    else:
-        abort(400)
+            response = add_new_entity(json['entity_id'])
+            if response:
+                print(json['entity_id'])
+                return 'Cущность создана'
 
 
 if __name__ == '__main__':

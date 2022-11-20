@@ -1,0 +1,5 @@
+aiogram~=2.20
+requests~=2.26.0
+SQLAlchemy~=1.4.44
+python-dotenv~=0.21.0
+Flask~=2.2.2
