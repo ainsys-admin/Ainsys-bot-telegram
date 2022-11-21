@@ -17,7 +17,7 @@ async def cmd_start(message: types.Message):
 
 
 @dp.message_handler(commands=[BotCommand.HELP])
-async def cmd_start(message: types.Message):
+async def cmd_help(message: types.Message):
     await message.answer(BotMessage.HELP)
 
 
@@ -40,7 +40,7 @@ async def cmd_get_entities(message: types.Message):
 
 
 @dp.message_handler(commands=[BotCommand.UPDATE_DATA])
-async def cmd_get_entities(message: types.Message):
+async def cmd_update_entities(message: types.Message):
     entities = get_entities(message.from_user.id)
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -50,7 +50,7 @@ async def cmd_get_entities(message: types.Message):
 
 
 @dp.message_handler(content_types=BotContentTypes.TEXT)
-async def extract_data(message: types.Message):
+async def get_text_info(message: types.Message):
     chat_info = message.chat
     user_id = message.from_user.id
     entities = get_entities(message.from_user.id)
