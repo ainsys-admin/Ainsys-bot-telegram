@@ -23,7 +23,7 @@ class BotMessage:
            '\n/get_entities - получение всех текущих сущностей' \
            '\n/update_data - отправка данных' \
            '\n/help - вызов меню с командами'
-    FIELD ='field: '
+    FIELD_AINSYS = 'field: '
 
 
 class BotCommand:

@@ -105,7 +105,7 @@ async def extract_data(message: types.Message):
 
         await message.answer(BotMessage.FIELDS, reply_markup=keyboard)
 
-    if BotMessage.FIELD in message.text:  # в разработке, нужно продумать сбор данных
+    if BotMessage.FIELD_AINSYS in message.text:  # в разработке, нужно продумать сбор данных
         field = message.text
 
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
