@@ -63,8 +63,8 @@ def get_fields_for_ainsys(entity_id):
     for field in fields_info:
         fields[field.field] = field.field
 
-    fields[fields_info[0].user_id] = fields_info[0].user_id
-    fields[fields_info[0].chat_id] = fields_info[0].chat_id
+    fields['user_id'] = fields_info[0].user_id
+    fields['chat_id'] = fields_info[0].chat_id
 
     return fields
 
